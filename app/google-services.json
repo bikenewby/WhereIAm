@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "621411312753",
+    "firebase_url": "https://whereiam-97390.firebaseio.com",
+    "project_id": "whereiam-97390",
+    "storage_bucket": "whereiam-97390.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:621411312753:android:dfe6028eabe15762",
+        "android_client_info": {
+          "package_name": "com.ks.poc.whereiam"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "621411312753-obe92ji6ihg1sobpbm7v3d0cles2v3v6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAa3RPyol-50Y2ywmVkSOvGU_sQq6FxX2U"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
