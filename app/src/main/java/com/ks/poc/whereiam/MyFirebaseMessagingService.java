@@ -8,6 +8,7 @@ import android.location.Location;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
@@ -59,7 +60,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     //This method is only generating push notification
     //It is same as we did in earlier posts
-    private void sendNotification(String messageBody, String dateTime, String who, String Lat, String Lng) {
+    private void sendNotification(String messageBody, String dateTime, String who, String Lat, String Lng, String provider) {
         Intent intent = new Intent(this, LocationMap.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("DATETIME",dateTime);
@@ -67,7 +68,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         loc.setLatitude(Double.parseDouble(Lat));
         loc.setLongitude(Double.parseDouble(Lng));
         intent.putExtra("LOCATION",loc);
-        intent.putExtra("WHO", who);
+        intent.putExtra("WHO", who + " (" + provider + ")");
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
@@ -95,9 +96,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             String message;
             Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String dateTime = formatter.format(new Date());
-            String kai_key = "cdqFiSFRtGs:APA91bF9Rh8f8Kg-93Hphp4TqXLzhAALktskRKN_jNfF4jJFthTuB5LpsGs3tDyrdTUPpbrOvxvEg6YitFN4-sv7i7SFHUBqb1I5tunqrV5BTbdhMteSws8MdtbGxaWwFvkQHTvxRTJM";
+            String kai_key = "cbAihDvyqI8:APA91bG1LIe7RAgRXWubTZbFxGRrQOiQcRs8Ei4FZgVOMRAHDfJz8TLjR88u0mXbS95565q1Y--yiQ13jjCwJCjudtdUQ-f96xo9xVMpk6UPTw26GRCrev4OiVO_92xeFmrGXj6caD0e";
 
-            message = "{\"MsgType\":\"T\",\"WHO\":\"" + Build.MODEL + "\",\"DATETIME\":\"" + dateTime + "\",\"LAT\":\"" + currentLoc.getLatitude() + "\",\"LNG\":\"" + currentLoc.getLongitude() + "\"}";
+            message = "{\"MsgType\":\"T\",\"WHO\":\"" + Build.MODEL + "\",\"DATETIME\":\"" + dateTime + "\",\"LAT\":\"" + currentLoc.getLatitude() + "\",\"LNG\":\"" + currentLoc.getLongitude() + "\",\"PROVIDER\":\"" + currentLoc.getProvider() + "/" + currentLoc.getAccuracy() + "/" + age_second(currentLoc) + "\"}";
             Log.d(TAG, "Sending Notification with Data: " + message);
 
             FCMDownstreamMessage messenger = new FCMDownstreamMessage();
@@ -115,17 +116,23 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
     }
 
+    private long age_second(Location last) {
+        return ((SystemClock.elapsedRealtimeNanos() - last.getElapsedRealtimeNanos()) / 1000000) / 1000;
+    }
+
     private void receiveLocationInfo(RemoteMessage remoteMessage) {
         String dateTime;
         String who;
         String lat;
         String lng;
+        String provider;
 
         who = remoteMessage.getData().get("WHO");
         dateTime = remoteMessage.getData().get("DATETIME");
         lat = remoteMessage.getData().get("LAT");
         lng = remoteMessage.getData().get("LNG");
-        Log.d(TAG, "Tracking message received: " + who + ", " + dateTime + ", " + lat + ", " + lng);
-        sendNotification("Tracking message received: " + who + ", " + dateTime + ", " + lat + ", " + lng,dateTime, who,lat,lng);
+        provider = remoteMessage.getData().get("PROVIDER");
+        Log.d(TAG, "Tracking message received: " + who + ", " + dateTime + ", " + lat + ", " + lng + ", " + provider);
+        sendNotification("Tracking message received: " + who + ", " + dateTime + ", " + lat + ", " + lng,dateTime, who,lat,lng,provider);
     }
 }

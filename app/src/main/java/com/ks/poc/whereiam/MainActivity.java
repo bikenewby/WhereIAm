@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
+import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, "(" + currentLoc.getLatitude() + ", " + currentLoc.getLongitude() + ")", Toast.LENGTH_LONG).show();
             Intent intent = new Intent(this,LocationMap.class);
             intent.putExtra("LOCATION",currentLoc);
-            intent.putExtra("WHO", Build.MODEL);
+            intent.putExtra("WHO", Build.MODEL + " (" + currentLoc.getProvider() + "/" + currentLoc.getAccuracy() + "/" + age_second(currentLoc) + ")");
 
             Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String dateTime = formatter.format(new Date());
@@ -64,11 +65,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private long age_second(Location last) {
+        return ((SystemClock.elapsedRealtimeNanos() - last.getElapsedRealtimeNanos()) / 1000000) / 1000;
+    }
+
     public void sendLocClicked(View view) {
         String message;
 
         message = "{\"MsgType\":\"R\"}";
-        String nuch_key = "d25UO9f7PGw:APA91bFUt4b9OUbrpBe6cDNqZcgSC53QiFga3OP-5bUT1GnSNtvZ1b2z6n152BhVMFVkkm7Ce7B41T8z99xaJFaIpXcFh20avDPjSZeq8mkytA9DchHqeVU3xvLG2AgUSkWpLKnrLF7k";
+        String nuch_key = "ePZcZwm0adU:APA91bGE9mvQcofvnnQS0I4M1s2abHNptjmJI14ZwCxB_-FjCWdSDKOpUd-UmmuPJdKIGd1zdMv7CWzatbC_HrlqdyNGjKjdtVYwcQMdcb_CWa9E-8vY_p2nvckzgHoyXj56zQXhhYnm";
 
         FCMDownstreamMessage messenger = new FCMDownstreamMessage();
         messenger.execute(nuch_key, message);
